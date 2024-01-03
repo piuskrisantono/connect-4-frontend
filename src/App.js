@@ -1,44 +1,21 @@
 import { Component } from 'react';
 import './App.css';
-import { connect, sendMessage } from './api';
 import Header from './components/Header';
-import ChatHistory from './components/ChatHistory';
-import ChatInput from './components/ChatInput';
+import Home from './components/Home';
+import Register from './components/Register/Register';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      chatHistory: []
-    }
-  }
-
-  componentDidMount() {
-    connect((msg) => {
-      console.log('New message: ', msg);
-
-      this.setState(prevState => ({
-        chatHistory: [...this.state.chatHistory, msg]
-      }));
-
-      console.log(this.state);
-    });
-  }
-
-  send(event) {
-    if (event.keyCode === 13) {
-      sendMessage(event.target.value);
-      event.target.value = '';
-    }
-  }
-
   render() {
     return (
       <div className="App">
         <Header />
-        <ChatHistory chatHistory={this.state.chatHistory} />
-        <ChatInput send={this.send} />
+        <BrowserRouter>
+          <Routes>
+            <Route exact path="/" element={<Register />} />
+            <Route exact path="/home" element={<Home />} />
+          </Routes>
+        </BrowserRouter>
       </div>
     )
   }
