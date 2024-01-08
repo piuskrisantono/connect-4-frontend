@@ -22,10 +22,7 @@ const BattleRoom = React.forwardRef((props, ref) => {
                     return prevBoards;
                 });
 
-                setIsPlayerOneTurn(prevIsPlayerOneTurn => {
-                    console.log('mama', prevIsPlayerOneTurn)
-                    return !prevIsPlayerOneTurn;
-                });
+                setIsPlayerOneTurn(!isPlayerOneTurn);
             }
         }
     }));
@@ -52,7 +49,6 @@ const BattleRoom = React.forwardRef((props, ref) => {
     const fillArray = (colIndex) => {
         if ((isPlayerOneTurn && isPlayerOne) || (!isPlayerOneTurn && !isPlayerOne)) {
             let rowIndex;
-            console.log(colIndex, boards)
             for (rowIndex = rowSize - 1; rowIndex >= 0; rowIndex--) {
                 if (!boards[rowIndex][colIndex]) {
                     break;

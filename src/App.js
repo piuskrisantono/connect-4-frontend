@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import './App.css';
-import Header from './components/Header';
-import Home from './components/Home';
+import Header from './components/Header/Header';
+import Home from './components/Home/Home';
 import Register from './components/Register/Register';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 

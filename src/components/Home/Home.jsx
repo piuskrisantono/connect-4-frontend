@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import BattleRoom from './BattleRoom/BattleRoom';
 import './Home.css';
-import Lobby from './Lobby';
+import Lobby from './Lobby/Lobby';
 import { connectToLobby, sendLobbyMessage } from './api';
 
 class Home extends Component {
@@ -35,13 +35,11 @@ class Home extends Component {
             });
             break;
           case 'confirmation':
-            console.log('yus', parsedMessage)
             this.setState(prevState => ({
               ...prevState, isShowConfirmation: true, battleInfo: parsedMessage
             }));
             break;
           case 'accept':
-            console.log('kiw', parsedMessage)
             this.setState(prevState => ({
               ...prevState, isShowBattleRoom: true,
               onGoingBattle: parsedMessage
