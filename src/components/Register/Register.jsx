@@ -1,44 +1,40 @@
-import React, { Component } from 'react';
-import { Player } from '../../model/Player';
-import { withRouter } from '../../util/withRouter';
+import React, { useEffect, useState } from 'react';
 import './Register.css';
+import { useNavigate } from 'react-router';
+import Constant from '../../Constant';
 
-class Register extends Component {
-  constructor(props) {
-    console.log('astuti')
-    super(props);
-    this.state = {
-      username: ''
+export default function Register() {
+  const [username, setUsername] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem(Constant.LOCAL_STORAGE_PLAYER)) {
+      navigate('/home');
+      return;
     }
+  }, [navigate])
+
+  const onUsernameChange = (event) => {
+    setUsername(event.target.value);
   }
 
-  onUsernameChange = (event) => {
-    this.setState({
-      username: event.target.value
-    })
-  }
-
-  onSubmit = () => {
-    const username = this.state.username;
+  const handleSubmit = (event) => {
+    event.preventDefault();
     if (username) {
       const id = username + Date.now();
-      const player = new Player(id, username)
-      localStorage.setItem('player', JSON.stringify(player));
-      this.props.navigate('/home');
-    } else {
-      alert('Fill in username');
+      const player = { id, username };
+      localStorage.setItem(Constant.LOCAL_STORAGE_PLAYER, JSON.stringify(player));
+      navigate('/home');
     }
   }
 
-  render() {
-    return (
-      <div>
-        <h2>Enter Username</h2>
-        <input value={this.state.username} onChange={this.onUsernameChange} placeholder="Username..." />
-        <button onClick={this.onSubmit}>Enter</button>
-      </div>
-    )
-  }
+  return (
+    <div>
+      <h2>Enter Username</h2>
+      <form onSubmit={handleSubmit}>
+        <input value={username} onChange={onUsernameChange} placeholder="Username..." required />
+        <button type='submit'>Enter</button>
+      </form>
+    </div>
+  );
 }
-
-export default withRouter(Register);

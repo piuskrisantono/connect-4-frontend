@@ -3,6 +3,7 @@ import BattleRoom from './BattleRoom/BattleRoom';
 import './Home.css';
 import Lobby from './Lobby/Lobby';
 import { connectToLobby, sendLobbyMessage } from './api';
+import Constant from '../../Constant';
 
 class Home extends Component {
   constructor(props) {
@@ -23,7 +24,7 @@ class Home extends Component {
   childRef = React.createRef();
 
   componentDidMount() {
-    const player = JSON.parse(localStorage.getItem('player'));
+    const player = JSON.parse(localStorage.getItem(Constant.LOCAL_STORAGE_PLAYER));
     this.setState(prevState => ({ ...prevState, player }))
     connectToLobby(player.id, player.username, (message) => {
       if (message && message.data) {
@@ -72,7 +73,7 @@ class Home extends Component {
         battleId: battleInfo.battleId,
         battleRoom: {
           playerOne: battleInfo.playerOne,
-          playerTwo: JSON.parse(localStorage.getItem('player'))
+          playerTwo: prevState.player
         }
       }
     }));
