@@ -1,24 +1,3 @@
-
-var socket;
-
-const connect = cb => {
-    socket = new WebSocket("ws://localhost:8080/ws");
-
-    socket.onopen = () => { };
-
-    socket.onmessage = msg => {
-        cb(msg);
-    };
-
-    socket.onclose = event => { };
-
-    socket.onerror = error => { };
-};
-
-const sendMessage = msg => {
-    socket.send(msg);
-};
-
 var lobbySocket;
 
 const connectToLobby = (id, username, callback) => {
@@ -33,4 +12,4 @@ const sendLobbyMessage = message => {
     lobbySocket.send(message);
 };
 
-export { connect, sendMessage, connectToLobby, sendLobbyMessage };
+export { connectToLobby, sendLobbyMessage };

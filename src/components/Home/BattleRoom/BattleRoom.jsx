@@ -182,6 +182,6 @@ const BattleRoom = React.forwardRef((props, ref) => {
             ))}
         </div>
     )
-})
+});
 
 export default BattleRoom;

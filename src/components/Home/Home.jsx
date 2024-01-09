@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 import Constant from '../../Constant';
 import BattleRoom from './BattleRoom/BattleRoom';
 import './Home.css';
@@ -9,14 +10,18 @@ export default function Home() {
   const [player, setPlayer] = useState({});
   const [players, setPlayers] = useState([]);
   const [isShowConfirmation, setIsShowConfirmation] = useState(false);
-  const [battleInfo, setBattleInfo] = useState({ playerOne: {} });
+  const [battleConfirmation, setBattleConfirmation] = useState({ playerOne: {} });
   const [isShowBattleRoom, setIsShowBattleRoom] = useState(false);
-  const [otherPlayerNewCellIndex, setOtherPlayerNewCellIndex] = useState(null);
   const [onGoingBattle, setOnGoingBattle] = useState({});
   const childRef = useRef();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const playerString = localStorage.getItem(Constant.LOCAL_STORAGE_PLAYER);
+    if (!playerString) {
+      navigate("/")
+      return;
+    }
     const player = JSON.parse(playerString);
     setPlayer(player);
     connectToLobby(player.id, player.username, (message) => {
@@ -28,7 +33,7 @@ export default function Home() {
             break;
           case 'confirmation':
             setIsShowConfirmation(true);
-            setBattleInfo(parsedMessage);
+            setBattleConfirmation(parsedMessage);
             break;
           case 'accept':
             setIsShowBattleRoom(true);
@@ -41,20 +46,20 @@ export default function Home() {
         }
       }
     });
-  }, []);
+  }, [navigate]);
 
   const answerBattle = (answer) => {
     const message = {
       type: answer,
-      content: battleInfo.battleId
+      content: battleConfirmation.battleId
     };
 
     setIsShowConfirmation(false,);
     setIsShowBattleRoom(true,);
     setOnGoingBattle({
-      battleId: battleInfo.battleId,
+      battleId: battleConfirmation.battleId,
       battleRoom: {
-        playerOne: battleInfo.playerOne,
+        playerOne: battleConfirmation.playerOne,
         playerTwo: player
       }
     });
@@ -63,24 +68,21 @@ export default function Home() {
   }
 
   const cleanUpBattle = () => {
-    setBattleInfo({ playerOne: {} });
+    setBattleConfirmation({ playerOne: {} });
     setIsShowBattleRoom(false);
-    setOtherPlayerNewCellIndex(null);
     setOnGoingBattle({});
   }
 
-
   return (
-    <div className="App">
+    <div>
       <Lobby player={player} players={players} />
       {isShowConfirmation && (
         <div>
-          {battleInfo.playerOne.username} challenges you to a battle!
+          {battleConfirmation.playerOne.username} challenges you to a battle!
           <button onClick={() => answerBattle('accept')}>accept</button><button onClick={() => answerBattle('decline')}>decline</button>
         </div>
       )}
       {isShowBattleRoom && <BattleRoom battleInfo={onGoingBattle} ref={childRef} cleanUpBattle={cleanUpBattle}></BattleRoom>}
     </div>
   )
-
 };
