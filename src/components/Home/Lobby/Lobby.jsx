@@ -1,5 +1,5 @@
 import React from 'react';
-import { sendLobbyMessage } from '../api';
+import { sendMessage } from '../api';
 import './Lobby.css';
 
 export default function Lobby(props) {
@@ -11,7 +11,7 @@ export default function Lobby(props) {
             content: playerId
         };
 
-        sendLobbyMessage(JSON.stringify(message));
+        sendMessage(JSON.stringify(message));
     }
 
     return (

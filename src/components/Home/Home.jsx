@@ -4,7 +4,7 @@ import Constant from '../../Constant';
 import BattleRoom from './BattleRoom/BattleRoom';
 import './Home.css';
 import Lobby from './Lobby/Lobby';
-import { connectToLobby, sendLobbyMessage } from './api';
+import { connectToServer, sendMessage } from './api';
 
 export default function Home() {
   const [player, setPlayer] = useState({});
@@ -24,7 +24,7 @@ export default function Home() {
     }
     const player = JSON.parse(playerString);
     setPlayer(player);
-    connectToLobby(player.id, player.username, (message) => {
+    connectToServer(player.id, player.username, (message) => {
       if (message && message.data) {
         const parsedMessage = JSON.parse(message.data);
         switch (parsedMessage.type) {
@@ -54,17 +54,19 @@ export default function Home() {
       content: battleConfirmation.battleId
     };
 
-    setIsShowConfirmation(false,);
-    setIsShowBattleRoom(true,);
-    setOnGoingBattle({
-      battleId: battleConfirmation.battleId,
-      battleRoom: {
-        playerOne: battleConfirmation.playerOne,
-        playerTwo: player
-      }
-    });
+    setIsShowConfirmation(false);
+    sendMessage(JSON.stringify(message));
 
-    sendLobbyMessage(JSON.stringify(message));
+    if (answer === 'accept') {
+      setIsShowBattleRoom(true);
+      setOnGoingBattle({
+        battleId: battleConfirmation.battleId,
+        battleRoom: {
+          playerOne: battleConfirmation.playerOne,
+          playerTwo: player
+        }
+      });
+    }
   }
 
   const cleanUpBattle = () => {
@@ -82,7 +84,7 @@ export default function Home() {
           <button onClick={() => answerBattle('accept')}>accept</button><button onClick={() => answerBattle('decline')}>decline</button>
         </div>
       )}
-      {isShowBattleRoom && <BattleRoom battleInfo={onGoingBattle} ref={childRef} cleanUpBattle={cleanUpBattle}></BattleRoom>}
+      {isShowBattleRoom && <BattleRoom player={player} battleDetail={onGoingBattle} ref={childRef} cleanUpBattle={cleanUpBattle}></BattleRoom>}
     </div>
   )
 };
