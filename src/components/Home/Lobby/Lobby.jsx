@@ -6,7 +6,7 @@ class Lobby extends Component {
     battlePlayer = (playerId) => {
         const message = {
             type: 'battle',
-            playerId
+            content: playerId
         };
 
         sendLobbyMessage(JSON.stringify(message));

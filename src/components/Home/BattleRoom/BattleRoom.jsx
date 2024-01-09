@@ -64,8 +64,10 @@ const BattleRoom = React.forwardRef((props, ref) => {
                 setIsPlayerOneTurn(!isPlayerOneTurn);
                 const message = {
                     type: 'fill',
-                    battleId: battleInfo.battleId,
-                    colIndex
+                    content: {
+                        battleId: battleInfo.battleId,
+                        colIndex
+                    }
                 };
 
                 sendLobbyMessage(JSON.stringify(message));
@@ -77,7 +79,7 @@ const BattleRoom = React.forwardRef((props, ref) => {
     const checkWinner = (rowIndex, colIndex, playerInTurn) => {
         const currentPlayerId = boards[rowIndex][colIndex];
         let i;
-        for(i = 1; i < 4; i++) {
+        for (i = 1; i < 4; i++) {
             if (rowIndex - i < 0) {
                 break;
             } else if (boards[rowIndex - i][colIndex] !== currentPlayerId) {
@@ -88,7 +90,7 @@ const BattleRoom = React.forwardRef((props, ref) => {
             setWinner(playerInTurn);
             return;
         }
-        for(i = 1; i < 4; i++) {
+        for (i = 1; i < 4; i++) {
             if (rowIndex - i < 0 || colIndex + i === colSize) {
                 break;
             } else if (boards[rowIndex - i][colIndex + i] !== currentPlayerId) {
@@ -99,7 +101,7 @@ const BattleRoom = React.forwardRef((props, ref) => {
             setWinner(playerInTurn);
             return;
         }
-        for(i = 1; i < 4; i++) {
+        for (i = 1; i < 4; i++) {
             if (colIndex + i === colSize) {
                 break;
             } else if (boards[rowIndex][colIndex + i] !== currentPlayerId) {
@@ -110,7 +112,7 @@ const BattleRoom = React.forwardRef((props, ref) => {
             setWinner(playerInTurn);
             return;
         }
-        for(i = 1; i < 4; i++) {
+        for (i = 1; i < 4; i++) {
             if (colIndex + i === colSize || rowIndex + i === rowSize) {
                 break;
             } else if (boards[rowIndex + i][colIndex + i] !== currentPlayerId) {
@@ -121,7 +123,7 @@ const BattleRoom = React.forwardRef((props, ref) => {
             setWinner(playerInTurn);
             return;
         }
-        for(i = 1; i < 4; i++) {
+        for (i = 1; i < 4; i++) {
             if (rowIndex + i === rowSize) {
                 break;
             } else if (boards[rowIndex + i][colIndex] !== currentPlayerId) {
@@ -132,7 +134,7 @@ const BattleRoom = React.forwardRef((props, ref) => {
             setWinner(playerInTurn);
             return;
         }
-        for(i = 1; i < 4; i++) {
+        for (i = 1; i < 4; i++) {
             if (rowIndex + i === rowSize || colIndex - i < 0) {
                 break;
             } else if (boards[rowIndex + i][colIndex - i] !== currentPlayerId) {
@@ -143,7 +145,7 @@ const BattleRoom = React.forwardRef((props, ref) => {
             setWinner(playerInTurn);
             return;
         }
-        for(i = 1; i < 4; i++) {
+        for (i = 1; i < 4; i++) {
             if (colIndex - i < 0) {
                 break;
             } else if (boards[rowIndex][colIndex - i] !== currentPlayerId) {
@@ -154,7 +156,7 @@ const BattleRoom = React.forwardRef((props, ref) => {
             setWinner(playerInTurn);
             return;
         }
-        for(i = 1; i < 4; i++) {
+        for (i = 1; i < 4; i++) {
             if (rowIndex - i < 0 || colIndex - i < 0) {
                 break;
             } else if (boards[rowIndex - i][colIndex - i] !== currentPlayerId) {
@@ -169,7 +171,7 @@ const BattleRoom = React.forwardRef((props, ref) => {
 
     return (
         <div>
-            {winner && (<div>Player  {winner.username} wins! <button onClick={cleanUpBattle}>Return to Lobby</button></div>) }
+            {winner && (<div>Player  {winner.username} wins! <button onClick={cleanUpBattle}>Return to Lobby</button></div>)}
             {(isPlayerOneTurn ? playerOne : playerTwo).username} {'('}{playerColorMapping[(isPlayerOneTurn ? playerOne : playerTwo).id]}{')'}'s turn!
             {boards.map((cells, rowIndex) => (
                 <div key={rowIndex} style={{ display: 'flex' }}>

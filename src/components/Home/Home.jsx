@@ -1,110 +1,86 @@
-import React, { Component } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import Constant from '../../Constant';
 import BattleRoom from './BattleRoom/BattleRoom';
 import './Home.css';
 import Lobby from './Lobby/Lobby';
 import { connectToLobby, sendLobbyMessage } from './api';
-import Constant from '../../Constant';
 
-class Home extends Component {
-  constructor(props) {
-    super(props);
+export default function Home() {
+  const [player, setPlayer] = useState({});
+  const [players, setPlayers] = useState([]);
+  const [isShowConfirmation, setIsShowConfirmation] = useState(false);
+  const [battleInfo, setBattleInfo] = useState({ playerOne: {} });
+  const [isShowBattleRoom, setIsShowBattleRoom] = useState(false);
+  const [otherPlayerNewCellIndex, setOtherPlayerNewCellIndex] = useState(null);
+  const [onGoingBattle, setOnGoingBattle] = useState({});
+  const childRef = useRef();
 
-    this.state = {
-      player: {},
-      players: [],
-      chatHistory: [],
-      isShowConfirmation: false,
-      battleInfo: { playerOne: {} },
-      isShowBattleRoom: false,
-      otherPlayerNewCellIndex: null,
-      onGoingBattle: {}
-    }
-  }
-
-  childRef = React.createRef();
-
-  componentDidMount() {
-    const player = JSON.parse(localStorage.getItem(Constant.LOCAL_STORAGE_PLAYER));
-    this.setState(prevState => ({ ...prevState, player }))
+  useEffect(() => {
+    const playerString = localStorage.getItem(Constant.LOCAL_STORAGE_PLAYER);
+    const player = JSON.parse(playerString);
+    setPlayer(player);
     connectToLobby(player.id, player.username, (message) => {
       if (message && message.data) {
         const parsedMessage = JSON.parse(message.data);
         switch (parsedMessage.type) {
           case 'players':
-            this.setState(prevState => {
-              return { ...prevState, players: parsedMessage.players };
-            });
+            setPlayers(parsedMessage.players);
             break;
           case 'confirmation':
-            this.setState(prevState => ({
-              ...prevState, isShowConfirmation: true, battleInfo: parsedMessage
-            }));
+            setIsShowConfirmation(true);
+            setBattleInfo(parsedMessage);
             break;
           case 'accept':
-            this.setState(prevState => ({
-              ...prevState, isShowBattleRoom: true,
-              onGoingBattle: parsedMessage
-            }));
+            setIsShowBattleRoom(true);
+            setOnGoingBattle(parsedMessage);
             break;
           case 'fill':
-            // this.setState(prevState => ({
-            //   ...prevState, otherPlayerNewCellIndex: parsedMessage.colIndex
-            // }));
-            this.childRef.current.fillBoardFromEnemy(parsedMessage.colIndex);
+            childRef.current.fillBoardFromEnemy(parsedMessage.colIndex);
             break;
           default:
         }
       }
     });
-  }
+  }, []);
 
-  answerBattle = (answer) => {
-    const { battleInfo } = this.state;
+  const answerBattle = (answer) => {
     const message = {
       type: answer,
-      battleId: battleInfo.battleId
+      content: battleInfo.battleId
     };
 
-    this.setState(prevState => ({
-      ...prevState,
-      isShowConfirmation: false,
-      isShowBattleRoom: true,
-      onGoingBattle: {
-        battleId: battleInfo.battleId,
-        battleRoom: {
-          playerOne: battleInfo.playerOne,
-          playerTwo: prevState.player
-        }
+    setIsShowConfirmation(false,);
+    setIsShowBattleRoom(true,);
+    setOnGoingBattle({
+      battleId: battleInfo.battleId,
+      battleRoom: {
+        playerOne: battleInfo.playerOne,
+        playerTwo: player
       }
-    }));
+    });
 
     sendLobbyMessage(JSON.stringify(message));
   }
 
-  cleanUpBattle = () => {
-    this.setState(prevState => ({
-      ...prevState,
-      battleInfo: { playerOne: {} },
-      isShowBattleRoom: false,
-      otherPlayerNewCellIndex: null,
-      onGoingBattle: {}
-    }));
+  const cleanUpBattle = () => {
+    setBattleInfo({ playerOne: {} });
+    setIsShowBattleRoom(false);
+    setOtherPlayerNewCellIndex(null);
+    setOnGoingBattle({});
   }
 
-  render() {
-    return (
-      <div className="App">
-        <Lobby player={this.state.player} players={this.state.players} />
-        {this.state.isShowConfirmation && (
-          <div>
-            {this.state.battleInfo.playerOne.username} challenges you to a battle!
-            <button onClick={() => this.answerBattle('accept')}>accept</button><button onClick={() => this.answerBattle('decline')}>decline</button>
-          </div>
-        )}
-        {this.state.isShowBattleRoom && <BattleRoom battleInfo={this.state.onGoingBattle} ref={this.childRef} cleanUpBattle={this.cleanUpBattle}></BattleRoom>}
-      </div>
-    )
-  }
-}
 
-export default Home;
+  return (
+    <div className="App">
+      <Lobby player={player} players={players} />
+      {isShowConfirmation && (
+        <div>
+          {battleInfo.playerOne.username} challenges you to a battle!
+          <button onClick={() => answerBattle('accept')}>accept</button><button onClick={() => answerBattle('decline')}>decline</button>
+        </div>
+      )}
+      {isShowBattleRoom && <BattleRoom battleInfo={onGoingBattle} ref={childRef} cleanUpBattle={cleanUpBattle}></BattleRoom>}
+    </div>
+  )
+
+};
