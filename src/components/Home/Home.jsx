@@ -9,10 +9,8 @@ import { connectToServer, sendMessage } from './api';
 export default function Home() {
   const [player, setPlayer] = useState({});
   const [players, setPlayers] = useState([]);
-  const [isShowConfirmation, setIsShowConfirmation] = useState(false);
-  const [battleConfirmation, setBattleConfirmation] = useState({ playerOne: {} });
-  const [isShowBattleRoom, setIsShowBattleRoom] = useState(false);
-  const [onGoingBattle, setOnGoingBattle] = useState({});
+  const [battleConfirmation, setBattleConfirmation] = useState(null);
+  const [onGoingBattle, setOnGoingBattle] = useState(null);
   const childRef = useRef();
   const navigate = useNavigate();
 
@@ -33,11 +31,9 @@ export default function Home() {
               setPlayers(parsedMessage.players);
               break;
             case 'confirmation':
-              setIsShowConfirmation(true);
               setBattleConfirmation(parsedMessage);
               break;
             case 'accept':
-              setIsShowBattleRoom(true);
               setOnGoingBattle(parsedMessage);
               break;
             case 'fill':
@@ -64,11 +60,10 @@ export default function Home() {
       content: battleConfirmation.battleId
     };
 
-    setIsShowConfirmation(false);
+    setBattleConfirmation(null);
     sendMessage(JSON.stringify(message));
 
     if (answer === 'accept') {
-      setIsShowBattleRoom(true);
       setOnGoingBattle({
         battleId: battleConfirmation.battleId,
         battleRoom: {
@@ -80,22 +75,20 @@ export default function Home() {
   }
 
   const cleanUpBattle = () => {
-    setIsShowConfirmation(false);
-    setBattleConfirmation({ playerOne: {} });
-    setIsShowBattleRoom(false);
-    setOnGoingBattle({});
+    setBattleConfirmation(null);
+    setOnGoingBattle(null);
   }
 
   return (
     <div>
       <Lobby player={player} players={players} />
-      {isShowConfirmation && (
+      {battleConfirmation && (
         <div>
           {battleConfirmation.playerOne.username} challenges you to a battle!
           <button onClick={() => answerBattle('accept')}>accept</button><button onClick={() => answerBattle('decline')}>decline</button>
         </div>
       )}
-      {isShowBattleRoom && <BattleRoom player={player} battleDetail={onGoingBattle} ref={childRef} cleanUpBattle={cleanUpBattle}></BattleRoom>}
+      {onGoingBattle && <BattleRoom player={player} battleDetail={onGoingBattle} ref={childRef} cleanUpBattle={cleanUpBattle}></BattleRoom>}
     </div>
   )
 };
