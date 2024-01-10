@@ -24,28 +24,38 @@ export default function Home() {
     }
     const player = JSON.parse(playerString);
     setPlayer(player);
-    connectToServer(player.id, player.username, (message) => {
-      if (message && message.data) {
-        const parsedMessage = JSON.parse(message.data);
-        switch (parsedMessage.type) {
-          case 'players':
-            setPlayers(parsedMessage.players);
-            break;
-          case 'confirmation':
-            setIsShowConfirmation(true);
-            setBattleConfirmation(parsedMessage);
-            break;
-          case 'accept':
-            setIsShowBattleRoom(true);
-            setOnGoingBattle(parsedMessage);
-            break;
-          case 'fill':
-            childRef.current.fillBoardFromEnemy(parsedMessage.colIndex);
-            break;
-          default:
+    connectToServer(player.id, player.username,
+      (message) => {
+        if (message && message.data) {
+          const parsedMessage = JSON.parse(message.data);
+          switch (parsedMessage.type) {
+            case 'players':
+              setPlayers(parsedMessage.players);
+              break;
+            case 'confirmation':
+              setIsShowConfirmation(true);
+              setBattleConfirmation(parsedMessage);
+              break;
+            case 'accept':
+              setIsShowBattleRoom(true);
+              setOnGoingBattle(parsedMessage);
+              break;
+            case 'fill':
+              childRef.current.fillBoardFromEnemy(parsedMessage.colIndex);
+              break;
+            case 'disconnect':
+              cleanUpBattle();
+              alert(parsedMessage.player.username + ' has disconnected. Match is cancelled :(');
+              break;
+            default:
+          }
         }
+      },
+      () => {
+        cleanUpBattle();
+        alert('You have been disconnected (Network error)');
       }
-    });
+    );
   }, [navigate]);
 
   const answerBattle = (answer) => {
@@ -70,6 +80,7 @@ export default function Home() {
   }
 
   const cleanUpBattle = () => {
+    setIsShowConfirmation(false);
     setBattleConfirmation({ playerOne: {} });
     setIsShowBattleRoom(false);
     setOnGoingBattle({});
