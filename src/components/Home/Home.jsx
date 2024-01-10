@@ -5,12 +5,14 @@ import BattleRoom from './BattleRoom/BattleRoom';
 import './Home.css';
 import Lobby from './Lobby/Lobby';
 import { connectToServer, sendMessage } from './api';
+import Countdown from './Countdown/Countdown';
 
 export default function Home() {
   const [player, setPlayer] = useState({});
   const [players, setPlayers] = useState([]);
   const [battleConfirmation, setBattleConfirmation] = useState(null);
   const [onGoingBattle, setOnGoingBattle] = useState(null);
+  const [isWaitingForBattle, setIsWaitingForBattle] = useState(false);
   const childRef = useRef();
   const navigate = useNavigate();
 
@@ -34,7 +36,12 @@ export default function Home() {
               setBattleConfirmation(parsedMessage);
               break;
             case 'accept':
+              setIsWaitingForBattle(false);
               setOnGoingBattle(parsedMessage);
+              break;
+            case 'decline':
+              setIsWaitingForBattle(false);
+              alert('Enemy didn\'t accept the battle')
               break;
             case 'fill':
               childRef.current.fillBoardFromEnemy(parsedMessage.colIndex);
@@ -75,17 +82,19 @@ export default function Home() {
   }
 
   const cleanUpBattle = () => {
+    setIsWaitingForBattle(false);
     setBattleConfirmation(null);
     setOnGoingBattle(null);
   }
 
   return (
     <div>
-      <Lobby player={player} players={players} />
+      {isWaitingForBattle ? 'Waiting answer from enemy...' : <Lobby player={player} players={players} onInviteBattle={() => {setIsWaitingForBattle(true);}} isOnBattle={onGoingBattle !== null} />}
       {battleConfirmation && (
         <div>
           {battleConfirmation.playerOne.username} challenges you to a battle!
           <button onClick={() => answerBattle('accept')}>accept</button><button onClick={() => answerBattle('decline')}>decline</button>
+          <Countdown second="10" onOver={() => answerBattle('decline')}></Countdown>
         </div>
       )}
       {onGoingBattle && <BattleRoom player={player} battleDetail={onGoingBattle} ref={childRef} cleanUpBattle={cleanUpBattle}></BattleRoom>}

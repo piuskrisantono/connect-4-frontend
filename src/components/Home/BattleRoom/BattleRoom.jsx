@@ -164,7 +164,7 @@ const BattleRoom = React.forwardRef((props, ref) => {
 
     return (
         <div>
-            {winner && (<div>Player  {winner.username} wins! <button onClick={cleanUpBattle}>Return to Lobby</button></div>)}
+            {winner && (<div>Player {winner.username} wins! <button onClick={cleanUpBattle}>Return to Lobby</button></div>)}
             {(isPlayerOneTurn ? playerOne : playerTwo).username} {'('}{playerColorMapping[(isPlayerOneTurn ? playerOne : playerTwo).id]}{')'}'s turn!
             {boards.map((cells, rowIndex) => (
                 <div key={rowIndex} style={{ display: 'flex' }}>

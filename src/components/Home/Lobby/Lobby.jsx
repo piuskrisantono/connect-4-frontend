@@ -3,15 +3,15 @@ import { sendMessage } from '../api';
 import './Lobby.css';
 
 export default function Lobby(props) {
-    const { player: loginPlayer, players } = props
+    const { player: loginPlayer, players, onInviteBattle, isOnBattle } = props
 
     const battlePlayer = (playerId) => {
         const message = {
             type: 'battle',
             content: playerId
         };
-
         sendMessage(JSON.stringify(message));
+        onInviteBattle();
     }
 
     return (
@@ -20,7 +20,7 @@ export default function Lobby(props) {
             {players?.map((player, index) => (
                 <div key={index}>
                     {player.username}
-                    {loginPlayer.id !== player.id && <button onClick={() => battlePlayer(player.id)}>Battle</button>}
+                    {loginPlayer.id !== player.id && !isOnBattle && <button onClick={() => battlePlayer(player.id)}>Battle</button>}
                 </div>
             ))}
         </div>
