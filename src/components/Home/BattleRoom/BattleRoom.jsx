@@ -1,5 +1,6 @@
 import React, { useImperativeHandle, useMemo, useState } from "react";
 import { sendMessage } from "../api";
+import './BattleRoom.css'
 
 const BattleRoom = React.forwardRef((props, ref) => {
     const rowSize = 6;
@@ -166,13 +167,37 @@ const BattleRoom = React.forwardRef((props, ref) => {
         <div>
             {winner && (<div>Player {winner.username} wins! <button onClick={cleanUpBattle}>Return to Lobby</button></div>)}
             {(isPlayerOneTurn ? playerOne : playerTwo).username} {'('}{playerColorMapping[(isPlayerOneTurn ? playerOne : playerTwo).id]}{')'}'s turn!
-            {boards.map((cells, rowIndex) => (
-                <div key={rowIndex} style={{ display: 'flex' }}>
-                    {cells.map((cell, colIndex) => (
-                        <div key={rowIndex + '-' + colIndex} onClick={() => fillBoard(colIndex)} style={{ cursor: (((isPlayerOneTurn && isPlayerOne) || (!isPlayerOneTurn && !isPlayerOne))  && !winner) ? 'pointer' : 'not-allowed', width: '60px', height: '60px', backgroundColor: 'salmon', border: '2px solid orange' }}>{boards[rowIndex][colIndex] ? playerColorMapping[boards[rowIndex][colIndex]] : ''}</div>
-                    ))}
+            <div style={{ width: '100%', height: ' 100%', position: 'relative' }}>
+                <div className="board-container">
+                    {boards.map((cells, rowIndex) =>
+                        cells.map((cell, colIndex) => (
+                            <div className="board-item" key={rowIndex + '-' + colIndex} onClick={() => fillBoard(colIndex)} style={{ cursor: (((isPlayerOneTurn && isPlayerOne) || (!isPlayerOneTurn && !isPlayerOne)) && !winner) ? 'pointer' : 'not-allowed' }}>
+                                <svg width="100%" height="100%" style={{ position: 'absolute', padding: 0, margin: 0 }}>
+                                    <defs>
+                                        <mask style={{ padding: 0, margin: 0 }} id="mask" x="0" y="0">
+                                            <rect style={{ padding: 0, margin: 0 }} width="100%" height="100%" fill="#fff" />
+                                            <circle cx="50%" cy="50%" r="45%" />
+                                        </mask>
+                                    </defs>
+                                    <rect x="0" y="0" width="100%" height="100%" mask="url(#mask)" style={{ padding: 0, margin: 0 }} />
+                                </svg>
+                            </div>
+                        ))
+                    )}
                 </div>
-            ))}
+                <div className="button-container">
+                    {boards.map((cells, rowIndex) =>
+                        cells.map((cell, colIndex) => (
+                            <div className="board-item">
+                                {boards[rowIndex][colIndex] && (
+                                    <div style={{ position:'absolute', width: '100%', height: '100%', backgroundColor: playerColorMapping[boards[rowIndex][colIndex]]}}>
+                                    </div>
+                                )}
+                            </div>
+                        ))
+                    )}
+                </div>
+            </div>
         </div>
     )
 });

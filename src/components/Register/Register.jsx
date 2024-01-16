@@ -29,12 +29,10 @@ export default function Register() {
   }
 
   return (
-    <div>
+    <form className='register-container' onSubmit={handleSubmit}>
       <h2>Enter Username</h2>
-      <form onSubmit={handleSubmit}>
-        <input value={username} onChange={onUsernameChange} placeholder="Username..." required />
-        <button type='submit'>Enter</button>
-      </form>
-    </div>
+      <input className='username-input' value={username} onChange={onUsernameChange} placeholder="Username..." required />
+      <button className='submit-button' type='submit'>Enter</button>
+    </form>
   );
 };

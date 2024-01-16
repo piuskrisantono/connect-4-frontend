@@ -1,0 +1,10 @@
+.App {
+    max-width: 750px;
+    min-height: 100vh;
+    margin: auto;
+    padding: 0 10px;
+    border: 1px lightgrey solid;
+    /* background-color: #711db0; */
+    display: grid;
+    grid-template-rows: 75px auto;
+}

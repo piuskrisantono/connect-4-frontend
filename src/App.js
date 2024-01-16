@@ -8,12 +8,14 @@ export default function App() {
   return (
     <div className="App">
       <Header />
-      <BrowserRouter>
-        <Routes>
-          <Route exact path="/" element={<Register />} />
-          <Route exact path="/home" element={<Home />} />
-        </Routes>
-      </BrowserRouter>
+      <div>
+        <BrowserRouter>
+          <Routes>
+            <Route exact path="/" element={<Register />} />
+            <Route exact path="/home" element={<Home />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
     </div>
   )
 }

@@ -1,0 +1,20 @@
+.register-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 50px;
+}
+
+.submit-button {
+    display: block;
+    width: 200px;
+    margin: 10px 0;
+    padding: 0;
+}
+
+.username-input {
+    width: 200px;
+    padding: 0;
+    margin-top: 25px;
+}

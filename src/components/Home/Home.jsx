@@ -88,15 +88,17 @@ export default function Home() {
   }
 
   return (
-    <div>
-      {isWaitingForBattle ? 'Waiting answer from enemy...' : <Lobby player={player} players={players} onInviteBattle={() => {setIsWaitingForBattle(true);}} isOnBattle={onGoingBattle !== null} />}
-      {battleConfirmation && (
-        <div>
-          {battleConfirmation.playerOne.username} challenges you to a battle!
-          <button onClick={() => answerBattle('accept')}>accept</button><button onClick={() => answerBattle('decline')}>decline</button>
-          <Countdown second="10" onOver={() => answerBattle('decline')}></Countdown>
-        </div>
-      )}
+    <div className='home-container'>
+      <div>
+        {isWaitingForBattle ? 'Waiting answer from enemy...' : <Lobby player={player} players={players} onInviteBattle={() => { setIsWaitingForBattle(true); }} isOnBattle={onGoingBattle !== null} />}
+        {battleConfirmation && (
+          <div>
+            {battleConfirmation.playerOne.username} challenges you to a battle!
+            <button onClick={() => answerBattle('accept')}>accept</button><button onClick={() => answerBattle('decline')}>decline</button>
+            <Countdown second="10" onOver={() => answerBattle('decline')}></Countdown>
+          </div>
+        )}
+      </div>
       {onGoingBattle && <BattleRoom player={player} battleDetail={onGoingBattle} ref={childRef} cleanUpBattle={cleanUpBattle}></BattleRoom>}
     </div>
   )
